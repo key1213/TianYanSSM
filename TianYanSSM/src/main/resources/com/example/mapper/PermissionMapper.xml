@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.PermissionMapper" >
+  <resultMap id="BaseResultMap" type="com.example.entity.Permission" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="permissionId" property="permissionid" jdbcType="INTEGER" />
+    <result column="pname" property="pname" jdbcType="VARCHAR" />
+    <result column="purl" property="purl" jdbcType="VARCHAR" />
+    <result column="ismenu" property="ismenu" jdbcType="INTEGER" />
+    <result column="parentId" property="parentid" jdbcType="INTEGER" />
+    <result column="pinfo" property="pinfo" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <resultMap id="PermissionResult" type="permission">
+    <id property="permissionId" column="permission"/>
+    <result property="pname" column="pname"/>
+    <result property="purl" column="purl"/>
+    <result property="ismenu" column="ismenu"/>
+    <result property="parentid" column="parentId"/>
+    <result property="pinfo" column="pinfo"/>
+    <!--    一对多映射    -->
+    <collection property="list" select="selectByParentId" column="permissionId"/>
+  </resultMap>
+
+  <select id="selectPermissionByName" parameterType="string" resultType="string">
+    select pe.pname from employees e,rolepermission ro,permission pe
+    where e.roleId = ro.roleId and ro.permissionId = pe.permissionId and e.username = #{name}
+  </select>
+
+  <select id="selectMenuByName" resultMap="PermissionResult">
+    select p.* from employees e,rolepermission r,permission p
+    where e.roleId = r.roleId
+      and r.permissionId = p.permissionId
+      and p.parentId = 0
+      and e.username = #{name}
+  </select>
+
+  <!--  根具自己id查询子权限  -->
+  <select id="selectByParentId" parameterType="int" resultMap="PermissionResult">
+    select * from permission where parentId = #{id}
+  </select>
+</mapper>

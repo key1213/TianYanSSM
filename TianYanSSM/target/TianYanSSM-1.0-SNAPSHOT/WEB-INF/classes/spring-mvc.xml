@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/aop
+       https://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!--  Controller 组件扫描  -->
+    <context:component-scan base-package="com.example.controller"/>
+
+    <mvc:annotation-driven></mvc:annotation-driven>
+    <!-- 放行静态资源（web.xml中配置了'/'） -->
+    <mvc:default-servlet-handler/>
+
+
+    <!--  视图解析器  -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"></bean>
+
+    <!--  解决日期格式问题  -->
+    <mvc:annotation-driven conversion-service="conversionServiceFactory" />
+    <!-- 转换器的配置 -->
+    <bean id="conversionServiceFactory"
+          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="com.example.converter.MyDateConverter" />
+            </set>
+        </property>
+    </bean>
+
+    <!--处理器适配器 给处理器适配器加入json转换器-->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"></bean>
+            </list>
+        </property>
+    </bean>
+    <!--  配置错误处理器  -->
+    <bean class="com.example.exception.MyExceptionResolver"/>
+
+    <!--  配置上传解析器  -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="5424880"/>
+        <property name="defaultEncoding" value="utf-8"/>
+    </bean>
+    <!--  shiro注解配置器  -->
+    <aop:config proxy-target-class="true"/>
+    <bean class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager"/>
+    </bean>
+</beans>

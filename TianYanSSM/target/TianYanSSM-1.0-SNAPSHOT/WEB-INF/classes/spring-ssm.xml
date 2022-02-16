@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       https://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <context:property-placeholder location="classpath:db.properties"/>
+    <context:component-scan base-package="com.example"/>
+    <!--  1.配置连接池  -->
+    <bean name="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.user}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+    <!--  2.配置工厂  -->
+    <bean name="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!--    给出mybatis文件的位置    -->
+                <property name="configLocation" value="classpath:Mybatis.xml"/>
+        <property name="mapperLocations" value="classpath:com/example/mapper/*.xml"/>
+    </bean>
+    <!--   3.动态代理得到通用mapper   -->
+    <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.example.mapper"/>
+        <property name="properties">
+            <value>
+                mappers=tk.mybatis.mapper.common.Mapper
+            </value>
+        </property>
+    </bean>
+
+    <!--  spring事务配置注解式  -->
+
+    <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager" name="transactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven/>
+
+    <!--  shiro配置  -->
+    <!--   1.加密管理器    -->
+    <bean name="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <property name="hashAlgorithmName" value="md5"/>
+        <property name="hashIterations" value="1"/>
+    </bean>
+    <!--  2.配置自定义的realm  -->
+    <bean name="realm" class="com.example.shiro.MyRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher"/>
+    </bean>
+    <!--  3.配置安全管理器  -->
+    <bean name="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="realm"/>
+    </bean>
+    <!--  4.配置shiro的过滤器  -->
+    <bean name="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="/index.jsp"/>
+        <property name="unauthorizedUrl" value="toShiroError.action"/>
+        <property name="filterChainDefinitions">
+            <value>
+                /index = anon
+                /index.jsp = anon
+                /login.action = anon
+                /shiro/login = anon
+                /change.action = anon
+                /css/** = anon
+                /javascript/** = anon
+                /** = authc
+            </value>
+        </property>
+    </bean>
+</beans>

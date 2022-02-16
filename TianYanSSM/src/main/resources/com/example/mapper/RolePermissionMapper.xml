@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.RolePermissionMapper" >
+    <resultMap id="BaseResultMap" type="com.example.entity.RolePermission" >
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="roleId" property="roleId" jdbcType="INTEGER" />
+        <result column="permissionId" property="permissionId" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="BaseResultMap2" type="com.example.entity.RolePermission" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="roleId" property="roleId" jdbcType="INTEGER" />
+        <result column="permissionId" property="permissionId" jdbcType="INTEGER" />
+        <result column="roleName" property="roleName" jdbcType="VARCHAR" />
+        <result column="pinfo" property="pinfo" jdbcType="VARCHAR" />
+    </resultMap>
+    <insert id="insertNewPermissionToRole" parameterType="RolePermission">
+        insert into rolepermission(roleId,permissionId) values(#{roleId},#{permissionId})
+    </insert>
+    <select id="selectAllRolePermission" resultMap="BaseResultMap2">
+        select rp.id,r.roleName,p.pinfo,r.roleId,p.permissionId from role r , permission p ,rolepermission rp
+        where r.roleId = rp.roleId and p.permissionId = rp.permissionId
+    </select>
+    <delete id="deleteById" parameterType="int">
+        delete from rolepermission where id = #{id}
+    </delete>
+    <select id="selectToInsert" parameterType="rolepermission" resultType="rolepermission">
+        select * from rolepermission where roleId = #{roleId} and permissionId = #{permissionId}
+    </select>
+</mapper>

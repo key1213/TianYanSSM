@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.CustomershareMapper" >
+  <resultMap id="BaseResultMap" type="com.example.entity.Customershare" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="empid" property="empid" jdbcType="INTEGER" />
+  </resultMap>
+
+  <resultMap id="findResultMap" type="com.example.entity.Customershare" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="empid" property="empid" jdbcType="INTEGER" />
+    <association property="cus" javaType="customer">
+      <id property="cid" column="cid" />
+      <result column="cusName" property="cusname" jdbcType="VARCHAR" />
+      <result column="Address" property="address" jdbcType="VARCHAR" />
+      <result column="contact" property="contact" jdbcType="VARCHAR" />
+      <result column="Tel" property="tel" jdbcType="VARCHAR" />
+      <result column="Email" property="email" jdbcType="VARCHAR" />
+    </association>
+    <association property="emp" javaType="employees">
+      <id property="empid" column="empid"/>
+      <result column="username" property="username" jdbcType="VARCHAR" />
+      <result column="password" property="password" jdbcType="VARCHAR" />
+      <result column="tel" property="tel" jdbcType="VARCHAR" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="email" property="email" jdbcType="VARCHAR" />
+      <result column="emptype" property="emptype" jdbcType="INTEGER" />
+      <result column="roleId" property="roleid" jdbcType="INTEGER" />
+    </association>
+  </resultMap>
+
+  <delete id="deleteByCid" parameterType="int" >
+    delete from customershare where cid  = #{id}
+  </delete>
+
+  <select id="selectCustomerShare"  resultMap="findResultMap">
+    select * from employees e,customer c,customershare cs,
+                     (select cid from customershare  group by cid having count(cid)>1) cc
+    where e.empid=cs.empid and c.cid = cs.cid and cc.cid = cs.cid order by cs.id
+  </select>
+  <select id="selectAllCustomerShare"  resultMap="findResultMap">
+    select * from employees e,customer c,customershare cs
+    where e.empid=cs.empid and c.cid = cs.cid order by cs.id
+  </select>
+  <select id="selectCustomershareToInsert" parameterType="customershare" resultType="customershare">
+    select * from customershare c where c.cid = #{cid} and c.empid = #{empid}
+  </select>
+</mapper>

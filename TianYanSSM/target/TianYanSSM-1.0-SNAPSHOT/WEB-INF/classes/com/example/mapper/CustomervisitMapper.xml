@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.CustomervisitMapper" >
+  <resultMap id="BaseResultMap" type="com.example.entity.Customervisit" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="empid" property="empid" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <resultMap id="BaseResultMap2" type="com.example.entity.Customervisit" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="empid" property="empid" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="TIMESTAMP" />
+    <result column="username" property="empname" jdbcType="VARCHAR" />
+    <result column="cusName" property="cusname" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectAllCustomerVisit" resultMap="BaseResultMap2">
+    select cv.*,e.username,c.cusName from customervisit cv,customer c,employees e
+    where cv.cid = c.cid and cv.empid = e.empid
+  </select>
+  <select id="selectAllCustomerVisitByName" resultMap="BaseResultMap2" parameterType="string">
+    select cv.*,e.username,c.cusName from customervisit cv,customer c,employees e
+    where cv.cid = c.cid and cv.empid = e.empid and e.username=#{name}
+  </select>
+  <select id="selectCustomerById" resultMap="BaseResultMap2" parameterType="int">
+    select cv.*,e.username,c.cusName from customervisit cv,customer c,employees e
+    where cv.cid = c.cid and cv.empid = e.empid and cv.id = #{id}
+  </select>
+</mapper>

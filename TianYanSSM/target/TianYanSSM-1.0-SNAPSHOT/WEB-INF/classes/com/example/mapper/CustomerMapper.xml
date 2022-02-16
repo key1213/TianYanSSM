@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.CustomerMapper" >
+  <resultMap id="BaseResultMap" type="com.example.entity.Customer" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="cusName" property="cusname" jdbcType="VARCHAR" />
+    <result column="Address" property="address" jdbcType="VARCHAR" />
+    <result column="contact" property="contact" jdbcType="VARCHAR" />
+    <result column="Tel" property="tel" jdbcType="VARCHAR" />
+    <result column="Email" property="email" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectCustomerByEmpUsername" parameterType="String" resultMap="BaseResultMap">
+    select c.* from employees e,customer c,customershare cs
+    where e.empid=cs.empid and c.cid = cs.cid and e.username= #{username} order by c.cid
+  </select>
+
+  <select id="selectCustomerByNameToUpdate"  parameterType="customer" resultMap="BaseResultMap">
+    select * from customer where cusName =#{cusname} and cid != #{cid}
+  </select>
+  <select id="selectCustomerByNameToInsert"  parameterType="customer" resultMap="BaseResultMap">
+    select * from customer where cusName =#{cusname}
+  </select>
+  <select id="selectCidByName" parameterType="string" resultType="int">
+    select cid from customer where cusName=#{name}
+  </select>
+</mapper>

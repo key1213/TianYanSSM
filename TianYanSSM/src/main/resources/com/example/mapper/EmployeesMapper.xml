@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mapper.EmployeesMapper" >
+  <resultMap id="BaseResultMap" type="com.example.entity.Employees" >
+  <!--
+    WARNING - @mbg.generated
+  -->
+  <id column="empid" property="empid" jdbcType="INTEGER" />
+  <result column="username" property="username" jdbcType="VARCHAR" />
+  <result column="password" property="password" jdbcType="VARCHAR" />
+  <result column="tel" property="tel" jdbcType="VARCHAR" />
+  <result column="name" property="name" jdbcType="VARCHAR" />
+  <result column="email" property="email" jdbcType="VARCHAR" />
+  <result column="emptype" property="emptype" jdbcType="INTEGER" />
+  <result column="roleId" property="roleid" jdbcType="INTEGER" />
+</resultMap>
+  <resultMap id="BaseResultMap2" type="com.example.entity.Employees" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="empid" property="empid" jdbcType="INTEGER" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="boss" property="boss" jdbcType="VARCHAR" />
+    <result column="roleName" property="roleName" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="emptype" property="emptype" jdbcType="INTEGER" />
+    <result column="roleId" property="roleid" jdbcType="INTEGER" />
+  </resultMap>
+  <select id="selectPasswordByName" resultType="string" parameterType="string">
+    select password from employees where username = #{name}
+  </select>
+  <select id="selectAllEmployee"  resultMap="BaseResultMap2">
+    select e.*,r.roleName,ee.username  as boss
+    from role r,employees e left join (select es.empid,es.username from employees es)ee on e.emptype = ee.empid where e.roleID=r.roleId
+  </select>
+  <select id="selectAllEmployeeByName"  resultMap="BaseResultMap2" parameterType="String">
+    select e.*,r.roleName,ee.username as boss from role r,employees e
+        left join (select es.empid,es.username from employees es)ee on e.emptype = ee.empid
+    where e.roleID=r.roleId and ee.username =#{name}
+  </select>
+  <select id="selectAllEmployeeById"  resultType="employees" parameterType="int">
+    select e.*,r.roleName,ee.username as boss from role r,employees e
+        left join (select es.empid,es.username from employees es)ee on e.emptype = ee.empid
+    where e.roleID=r.roleId and e.empid =#{id}
+  </select>
+  <select id="selectEmployeeToChose" resultType="employees">
+    select * from employees where emptype = 0 and roleId != 1
+  </select>
+  <select id="selectEmployeeByNameToInsert" resultType="employees" parameterType="employees">
+    select * from employees where employees.username = #{username}
+  </select>
+  <select id="selectEmployeeByNameToUpdate" resultType="employees" parameterType="employees">
+    select * from employees where employees.username = #{username} and employees.empid != #{empid}
+  </select>
+  <select id="selectEmployeeToChoseWithoutName" resultType="employees" parameterType="String">
+    select * from employees where employees.emptype != 0 and employees.username != #{name}
+  </select>
+  <update id="updatePasswordByName" parameterType="employees">
+    update employees set password = #{password} where username = #{username}
+  </update>
+  <select id="selectEmpidByName" parameterType="string" resultType="int">
+    select empid from employees where username=#{name}
+  </select>
+</mapper>

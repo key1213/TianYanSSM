@@ -1,0 +1,57 @@
+* {
+    margin: 0;
+    border: 0;
+}
+
+html body {
+    height: 100%;
+    width: 100%;
+}
+
+.top {
+    position: relative;
+    height: 10%;
+    background-color: #18324b;
+    color: #a9a1a7;
+    text-align: center;
+    padding-top: 20px;
+}
+.left {
+    height: 85%;
+    width: 20%;
+    text-align: center;
+    background-color:#121e34 ;
+
+}
+.right {
+    height: 85%;
+    width: 80%;
+}
+.left,.right {
+    float: left;
+}
+
+.left>a {
+    display: inline-block;
+    text-decoration: none;
+    margin: 17px auto;
+    color: white;
+}
+
+.left>a:hover {
+
+    background-color: white;
+    color: black;
+}
+.top>a {
+    width: 70px;
+    height: 30px;
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    text-decoration: none;
+    color: #4bd4ff;
+}
+.top>a:hover {
+    color: white;
+}
